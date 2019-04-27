@@ -3,6 +3,7 @@ import { POSTS_SET } from '../constants';
 
 const initialState = {
   posts: [],
+  favorites: [],
 };
 
 const postsReducer = (state: {} = initialState, action: { type: string; payload: any }): any => {
