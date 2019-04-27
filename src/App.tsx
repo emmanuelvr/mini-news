@@ -38,7 +38,7 @@ const persistedReducer = persistReducer(persistConfig, rootReducer);
 const store = createStore(persistedReducer, applyMiddleware(thunk));
 const persistor = persistStore(store);
 
-function NavigatorWithState(): React.ReactNode {
+function NavigatorWithState(): JSX.Element {
   return (
     <Provider store={store}>
       <PersistGate persistor={persistor}>
