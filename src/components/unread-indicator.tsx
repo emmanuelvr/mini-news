@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text } from 'react-native';
 import commonColor from '../../theme/variables/commonColor';
 
-const NotReadIndicator = (): JSX.Element => {
+const UnreadIndicator = (): JSX.Element => {
   return (
     <View
       style={{
@@ -16,4 +16,4 @@ const NotReadIndicator = (): JSX.Element => {
   );
 };
 
-export default NotReadIndicator;
+export default UnreadIndicator;
