@@ -14,15 +14,19 @@ import commonColor from '../theme/variables/commonColor';
 import rootReducer from './redux';
 // screens
 import PostsScreen from './screens/posts';
+import PostDetailsScreen from './screens/post-details';
 
 const StackNavigator = createStackNavigator(
   {
-    Main: {
+    Posts: {
       screen: PostsScreen,
+    },
+    Post: {
+      screen: PostDetailsScreen,
     },
   },
   {
-    initialRouteName: 'Main',
+    initialRouteName: 'Posts',
   },
 );
 
