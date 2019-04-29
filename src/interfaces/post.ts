@@ -4,6 +4,7 @@ interface Post {
   body: string;
   userId: number;
   read?: boolean;
+  isFavorite: boolean;
 }
 
 export default Post;
