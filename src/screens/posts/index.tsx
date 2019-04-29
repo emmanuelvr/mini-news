@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import React, { Component } from 'react';
+import { connect } from 'react-redux';
 import {
   Body,
   Button,
@@ -12,19 +13,28 @@ import {
   Right,
   Segment,
 } from 'native-base';
+// actions
+import postActions from '../../redux/posts/actions';
 // interfaces
 import Navigation from '../../interfaces/navigation';
+import ReduxModel from '../../interfaces/redux-model';
+import Post from '../../interfaces/post';
 // components
 import DeletePostsFooter from './components/delete-posts-footer';
+import PostsList from './components/posts-list';
 
 interface Props {
   navigation?: Navigation;
+  posts: {
+    posts: [];
+    favorites: [];
+  };
+  fetchPosts: () => void;
+  setPosts: (posts: Post[]) => void;
 }
 
 interface State {
-  listData: string[];
   showFavorites: boolean;
-  favorites: [];
 }
 
 class PostsScreen extends Component<Props, State> {
@@ -32,17 +42,38 @@ class PostsScreen extends Component<Props, State> {
     header: null,
   };
 
-  constructor(props: any) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       showFavorites: false,
-      listData: [],
-      favorites: [],
+      listData: props.posts.posts,
     };
   }
 
-  render(): React.ReactNode {
+  componentDidMount(): void {
+    this.props.fetchPosts();
+  }
+
+  deletePost = (post: any, rowId: any): void => {
+    const { setPosts } = this.props;
+    const { listData } = this.state;
+    const newData = [...listData];
+    newData.splice(rowId, 1);
+    this.setState({ listData: newData });
+    setPosts(newData);
+  };
+
+  addFavorite = (post: any): void => {
+    console.log('Post to fav would be', post);
+  };
+
+  render(): JSX.Element {
     const { showFavorites } = this.state;
+    const {
+      posts: { favorites, posts },
+      navigation,
+      fetchPosts,
+    } = this.props;
     return (
       <Container>
         <Header hasSegment>
@@ -67,10 +98,19 @@ class PostsScreen extends Component<Props, State> {
               </Button>
             </Segment>
           </Body>
-          <Right />
+          <Right>
+            <Button transparent onPress={fetchPosts}>
+              <Icon name="refresh" />
+            </Button>
+          </Right>
         </Header>
         <Content>
-          <Text>Items goes here</Text>
+          <PostsList
+            onPressItem={(post: Post): void => navigation && navigation.navigate('Post', { post })}
+            onPressLeft={this.addFavorite}
+            onPressRight={this.deletePost}
+            items={showFavorites ? favorites : posts}
+          />
         </Content>
         <DeletePostsFooter />
       </Container>
@@ -78,4 +118,12 @@ class PostsScreen extends Component<Props, State> {
   }
 }
 
-export default PostsScreen;
+export default connect(
+  (state: ReduxModel): any => ({
+    posts: state.posts,
+  }),
+  (dispatch): any => ({
+    fetchPosts: (): void => dispatch(postActions.fetchPosts()),
+    setPosts: (posts: Post[]): void => dispatch(postActions.setPosts(posts)),
+  }),
+)(PostsScreen);
