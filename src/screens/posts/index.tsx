@@ -12,6 +12,7 @@ import {
   Text,
   Right,
   Segment,
+  Spinner,
 } from 'native-base';
 // actions
 import postActions from '../../redux/posts/actions';
@@ -19,18 +20,18 @@ import postActions from '../../redux/posts/actions';
 import Navigation from '../../interfaces/navigation';
 import ReduxModel from '../../interfaces/redux-model';
 import Post from '../../interfaces/post';
+import { PostsState } from '../../redux/posts/reducer';
 // components
 import DeletePostsFooter from './components/delete-posts-footer';
 import PostsList from './components/posts-list';
+import { View } from 'react-native';
 
 interface Props {
   navigation?: Navigation;
-  posts: {
-    posts: [];
-    favorites: [];
-  };
+  posts: PostsState;
   fetchPosts: () => void;
   setPosts: (posts: Post[]) => void;
+  toggleFavoritePost: (post: Post) => void;
 }
 
 interface State {
@@ -46,7 +47,6 @@ class PostsScreen extends Component<Props, State> {
     super(props);
     this.state = {
       showFavorites: false,
-      listData: props.posts.posts,
     };
   }
 
@@ -54,26 +54,58 @@ class PostsScreen extends Component<Props, State> {
     this.props.fetchPosts();
   }
 
-  deletePost = (post: any, rowId: any): void => {
-    const { setPosts } = this.props;
-    const { listData } = this.state;
-    const newData = [...listData];
-    newData.splice(rowId, 1);
-    this.setState({ listData: newData });
+  deletePost = (post: any): void => {
+    const {
+      setPosts,
+      posts: { posts },
+    } = this.props;
+    const newData = [...posts];
+    const postIndex = posts.findIndex((p: Post): boolean => p.id === post.id);
+    newData.splice(postIndex, 1);
     setPosts(newData);
   };
 
-  addFavorite = (post: any): void => {
-    console.log('Post to fav would be', post);
+  displayPostsStatus = (): JSX.Element => {
+    const { showFavorites } = this.state;
+    const {
+      posts: { fetching },
+    } = this.props;
+
+    let content = null;
+    if (fetching) {
+      content = <Text style={{ textAlign: 'center' }}>Loading posts...</Text>;
+    }
+
+    if (showFavorites) {
+      content = (
+        <React.Fragment>
+          <Text>Oops, it seems you don't have any favorite posts yet.</Text>
+          <Text
+            style={{ color: 'blue', marginTop: 10 }}
+            onPress={(): void => this.setState({ showFavorites: false })}
+          >
+            Tap here to start looking for your next favorite post!
+          </Text>
+        </React.Fragment>
+      );
+    } else {
+      content = <Text>There are no posts available. Please try again later.</Text>;
+    }
+
+    return <View style={{ marginTop: 30, paddingHorizontal: 10 }}>{content}</View>;
   };
 
   render(): JSX.Element {
     const { showFavorites } = this.state;
     const {
-      posts: { favorites, posts },
+      posts: { favorites, posts, fetching },
       navigation,
       fetchPosts,
+      toggleFavoritePost,
     } = this.props;
+
+    const postsToShow = showFavorites ? favorites : posts;
+
     return (
       <Container>
         <Header hasSegment>
@@ -99,31 +131,38 @@ class PostsScreen extends Component<Props, State> {
             </Segment>
           </Body>
           <Right>
-            <Button transparent onPress={fetchPosts}>
-              <Icon name="refresh" />
+            <Button transparent onPress={fetching ? undefined : fetchPosts}>
+              {fetching ? <Spinner color="white" size={16} /> : <Icon name="refresh" />}
             </Button>
           </Right>
         </Header>
         <Content>
-          <PostsList
-            onPressItem={(post: Post): void => navigation && navigation.navigate('Post', { post })}
-            onPressLeft={this.addFavorite}
-            onPressRight={this.deletePost}
-            items={showFavorites ? favorites : posts}
-          />
+          {postsToShow.length ? (
+            <PostsList
+              onPressItem={(post: Post): void =>
+                navigation && navigation.navigate('Post', { post })
+              }
+              onPressLeft={(post: Post): void => toggleFavoritePost(post)}
+              onPressRight={this.deletePost}
+              items={postsToShow}
+            />
+          ) : (
+            this.displayPostsStatus()
+          )}
         </Content>
-        <DeletePostsFooter />
+        <DeletePostsFooter showFavorites={showFavorites} />
       </Container>
     );
   }
 }
 
 export default connect(
-  (state: ReduxModel): any => ({
+  (state: ReduxModel): object => ({
     posts: state.posts,
   }),
-  (dispatch): any => ({
+  (dispatch): object => ({
     fetchPosts: (): void => dispatch(postActions.fetchPosts()),
     setPosts: (posts: Post[]): void => dispatch(postActions.setPosts(posts)),
+    toggleFavoritePost: (post: Post): void => dispatch(postActions.toggleFavoritePost(post)),
   }),
 )(PostsScreen);

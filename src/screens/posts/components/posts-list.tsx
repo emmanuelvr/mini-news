@@ -9,7 +9,7 @@ import PostListItem from '../../../components/post-list-item';
 
 interface Props {
   onPressLeft: (item: Post) => void;
-  onPressRight: (item: Post, rowMap: any) => void;
+  onPressRight: (item: Post) => void;
   onPressItem: (item: Post) => void;
   items: Post[];
 }
@@ -25,29 +25,28 @@ export default class PostsList extends Component<Props> {
     };
   }
 
-  deleteRow(secId, rowId, rowMap) {
+  deleteRow = (data, secId, rowId, rowMap): void => {
+    const { onPressRight } = this.props;
     rowMap[`${secId}${rowId}`].props.closeRow();
-    const newData = [...this.state.listViewData];
-    newData.splice(rowId, 1);
-    this.setState({ listViewData: newData });
-  }
+    onPressRight(data);
+  };
 
   render(): JSX.Element {
-    const { items, onPressLeft, onPressRight } = this.props;
+    const { items, onPressLeft } = this.props;
 
     return (
       <List
         leftOpenValue={75}
         rightOpenValue={-75}
         dataSource={this.dataSource.cloneWithRows(items)}
-        renderRow={data => <PostListItem post={data} />}
-        renderLeftHiddenRow={data => (
-          <Button full onPress={() => alert(data)}>
-            <Icon active name="information-circle" />
+        renderRow={(data: Post): JSX.Element => <PostListItem post={data} />}
+        renderLeftHiddenRow={(data: Post): JSX.Element => (
+          <Button full onPress={(): void => onPressLeft(data)}>
+            <Icon active name="star" />
           </Button>
         )}
-        renderRightHiddenRow={(data, secId, rowId, rowMap) => (
-          <Button full danger onPress={_ => this.deleteRow(secId, rowId, rowMap)}>
+        renderRightHiddenRow={(data: Post, secId, rowId, rowMap): JSX.Element => (
+          <Button full danger onPress={(): void => this.deleteRow(data, secId, rowId, rowMap)}>
             <Icon active name="trash" />
           </Button>
         )}
