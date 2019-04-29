@@ -3,6 +3,7 @@ Small app to view posts
 
 ## Prequisites
 - Make sure you can run [React Native](https://facebook.github.io/react-native/docs/getting-started)
+- Use Node version `11.13.0`
 
 ## Running the project
 - Run `yarn` or `npm install`
