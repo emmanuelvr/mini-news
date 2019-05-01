@@ -56,7 +56,6 @@ class PostDetailsScreen extends Component<Props, State> {
       loadingComments: true,
       comments: [],
     };
-    console.log('Was this constructed again', this.state.isFavorite);
   }
 
   componentDidMount(): void {
