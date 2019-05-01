@@ -6,6 +6,7 @@ import {
   POSTS_FAVORITES_SET,
   POSTS_FAVORITES_IDS_SET,
   POSTS_FETCHING_SET,
+  POSTS_READ_SET,
 } from '../constants';
 // interfaces
 import ReduxModel from '../../interfaces/redux-model';
@@ -52,14 +53,14 @@ function filterPosts(posts: Post[]): Function {
         const newPost = {
           ...post,
           isFavorite,
-          read: readPosts.includes(post.id) || index < 20,
+          read: readPosts.includes(post.id) || index > 19,
         };
 
         if (isFavorite) favorites.push(newPost);
-
         return newPost;
       },
     );
+
     dispatch(setPosts(newPosts));
     dispatch(setFavorites(favorites));
   };
@@ -110,7 +111,21 @@ function toggleFavoritePost(post: Post): any {
   };
 }
 
+function addRead(postId: number): any {
+  return (dispatch: Function, getState: Function): void => {
+    const {
+      posts: { readPosts },
+    }: ReduxModel = getState();
+    readPosts.push(postId);
+    dispatch({
+      type: POSTS_READ_SET,
+      payload: readPosts,
+    });
+  };
+}
+
 export default {
+  addRead,
   setPosts,
   setFavorites,
   setFavoritesIds,

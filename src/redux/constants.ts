@@ -1,5 +1,6 @@
 // posts related
 export const POSTS_SET = 'POSTS_SET';
+export const POSTS_READ_SET = 'POSTS_READ_SET';
 export const POSTS_FAVORITES_SET = 'POSTS_FAVORITES_SET';
 export const POSTS_FAVORITES_IDS_SET = 'POSTS_FAVORITES_IDS_SET';
 export const POSTS_FETCHING_SET = 'POSTS_FETCHING_SET';

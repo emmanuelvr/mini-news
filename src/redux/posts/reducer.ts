@@ -4,6 +4,7 @@ import {
   POSTS_FAVORITES_SET,
   POSTS_FAVORITES_IDS_SET,
   POSTS_FETCHING_SET,
+  POSTS_READ_SET,
 } from '../constants';
 import Post from '../../interfaces/post';
 
@@ -48,6 +49,13 @@ const postsReducer = (state: {} = initialState, action: { type: string; payload:
         ...state,
         fetching: action.payload,
       };
+
+    case POSTS_READ_SET:
+      return {
+        ...state,
+        readPosts: action.payload,
+      };
+
     default:
       return state;
   }
