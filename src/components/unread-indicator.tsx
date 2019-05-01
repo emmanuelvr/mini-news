@@ -9,7 +9,7 @@ const UnreadIndicator = (): JSX.Element => {
         height: 15,
         width: 15,
         borderRadius: 15,
-        backgroundColor: commonColor.brandPrimary,
+        backgroundColor: '#629cf7',
         marginHorizontal: 6,
       }}
     />
