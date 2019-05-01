@@ -9,12 +9,19 @@ import Navigation from '../interfaces/navigation';
 interface Props {
   post: Post;
   navigation?: Navigation;
+  onPress?: (post: Post) => void;
 }
 
 const PostListItem = (props: Props): JSX.Element => {
-  const { post, navigation } = props;
+  const { post, navigation, onPress } = props;
   return (
-    <ListItem onPress={(): void => navigation && navigation.navigate('Post', { post })}>
+    <ListItem
+      onPress={(): void => {
+        navigation && navigation.navigate('Post', { post });
+        onPress && onPress(post);
+      }}
+      style={{ paddingHorizontal: 10 }}
+    >
       {!post.read && <UnreadIndicator />}
       <Text>{post.title}</Text>
     </ListItem>

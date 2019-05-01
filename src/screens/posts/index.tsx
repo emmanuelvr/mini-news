@@ -32,6 +32,7 @@ interface Props {
   fetchPosts: () => void;
   setPosts: (posts: Post[]) => void;
   toggleFavoritePost: (post: Post) => void;
+  addRead: (postId: number) => void;
 }
 
 interface State {
@@ -102,6 +103,7 @@ class PostsScreen extends Component<Props, State> {
       navigation,
       fetchPosts,
       toggleFavoritePost,
+      addRead,
     } = this.props;
 
     const postsToShow = showFavorites ? favorites : posts;
@@ -139,9 +141,11 @@ class PostsScreen extends Component<Props, State> {
         <Content>
           {postsToShow.length ? (
             <PostsList
-              onPressItem={(post: Post): void =>
-                navigation && navigation.navigate('Post', { post })
-              }
+              onPressItem={(post: Post): void => {
+                navigation && navigation.navigate('Post', { post });
+                addRead(post.id);
+                fetchPosts();
+              }}
               onPressLeft={(post: Post): void => toggleFavoritePost(post)}
               onPressRight={this.deletePost}
               items={postsToShow}
@@ -164,5 +168,6 @@ export default connect(
     fetchPosts: (): void => dispatch(postActions.fetchPosts()),
     setPosts: (posts: Post[]): void => dispatch(postActions.setPosts(posts)),
     toggleFavoritePost: (post: Post): void => dispatch(postActions.toggleFavoritePost(post)),
+    addRead: (postId: number): void => dispatch(postActions.addRead(postId)),
   }),
 )(PostsScreen);

@@ -32,17 +32,17 @@ export default class PostsList extends Component<Props> {
   };
 
   render(): JSX.Element {
-    const { items, onPressLeft } = this.props;
+    const { items, onPressLeft, onPressItem } = this.props;
 
     return (
       <List
         leftOpenValue={75}
         rightOpenValue={-75}
         dataSource={this.dataSource.cloneWithRows(items)}
-        renderRow={(data: Post): JSX.Element => <PostListItem post={data} />}
+        renderRow={(data: Post): JSX.Element => <PostListItem onPress={onPressItem} post={data} />}
         renderLeftHiddenRow={(data: Post): JSX.Element => (
           <Button full onPress={(): void => onPressLeft(data)}>
-            <Icon active name="star" />
+            <Icon active name={`star${!data.isFavorite ? '-outline' : ''}`} />
           </Button>
         )}
         renderRightHiddenRow={(data: Post, secId, rowId, rowMap): JSX.Element => (
