@@ -17,7 +17,7 @@ function PostComments(props: Props): JSX.Element {
   const { comments, loading } = props;
 
   if (loading) {
-    return <ActivityIndicator size={30} color={commonColor.brandPrimary} />;
+    return <ActivityIndicator size="small" color={commonColor.brandPrimary} />;
   }
 
   return (

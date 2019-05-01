@@ -134,7 +134,7 @@ class PostsScreen extends Component<Props, State> {
           </Body>
           <Right>
             <Button transparent onPress={fetching ? undefined : fetchPosts}>
-              {fetching ? <Spinner color="white" size={16} /> : <Icon name="refresh" />}
+              {fetching ? <Spinner color="white" size="small" /> : <Icon name="refresh" />}
             </Button>
           </Right>
         </Header>
